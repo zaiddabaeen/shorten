@@ -159,7 +159,7 @@ class IndexController extends AbstractActionController {
 
 			if ($username == "root" && $password == "root") {
 
-				$_SESSION['logged'] = true;
+				$_SESSION['admin'] = true;
 
 				if ($remember_me == 'on') {
 					$expire = time() + (60 * 60 * 24 * 30);
@@ -168,13 +168,13 @@ class IndexController extends AbstractActionController {
 					$secure = false;
 					$httponly = true;
 
-					setcookie('logged', 'true', $expire);
+					setcookie('admin', 'true', $expire);
 				}
 
 				message('1', 'Get In!');
 			} else {
 
-				$_SESSION['logged'] = false;
+				$_SESSION['admin'] = false;
 
 				message('0', 'Wrong credentials');
 			}
@@ -185,14 +185,14 @@ class IndexController extends AbstractActionController {
 
 	function logoutAction() {
 		$this->layout()->loggedIn = false;
-		unset($_SESSION['logged']);
-		unset($_COOKIE['logged']);
-		setcookie('logged', null, -1);
+		unset($_SESSION['admin']);
+		unset($_COOKIE['admin']);
+		setcookie('admin', null, -1);
 		return $this->redirect()->toRoute('index', ['action' => 'login']);
 	}
 
 	function isLoggedIn() {
-		if (!isset($_COOKIE['logged']) && !isset($_SESSION['logged'])) {
+		if (!isset($_COOKIE['admin']) && !isset($_SESSION['admin'])) {
 			return $this->redirect()->toRoute('index', ['action' => 'login']);
 			$this->layout()->loggedIn = false;
 		} else {
