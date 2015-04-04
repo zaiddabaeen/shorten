@@ -1,0 +1,4 @@
+/config/
+/nbproject/
+*.sql
+.DS_Store

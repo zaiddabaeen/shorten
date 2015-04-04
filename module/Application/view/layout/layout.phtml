@@ -1,0 +1,168 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="author" content="Zaid Daba\'een - Shorten"/>
+        <meta property="og:type"   content="website" />
+        <meta property="og:image"  content="<?php echo $this->basePath('images/shorten_logo.png') ?>" />
+        <!-- <meta name="google-site-verification" content="" /> replace or remove & see what we can do -->
+
+        <link rel="icon" type="image/vnd.microsoft.icon" href="<?php echo $this->basePath('images/shorten_logo.png') ?>" />
+        <link rel="icon" type="image/png" href="<?php echo $this->basePath('images/shorten_logo.png') ?>" />
+        <link rel="apple-touch-icon" href="<?php echo $this->basePath('images/shorten_logo.png') ?>" />
+        <link rel="shortcut icon" href="<?php echo $this->basePath('images/shorten_logo.png') ?>" />
+
+		<?php echo $this->headTitle($this->translate('Shorten'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+		<?php
+		echo $this->headMeta()
+			->appendName('viewport', 'width=device-width, initial-scale=1.0')
+			->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+		?>
+
+		<script>
+			var $basePath = "<?php echo $this->basePath() ?>";
+		</script>
+		
+		<?php
+		echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/shorten_logo.png'))
+			->prependStylesheet($this->basePath() . '/css/style.css')
+			->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
+			->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+			->prependStylesheet('//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css')
+		?>
+		<?php
+		echo $this->headScript()
+			->appendFile($this->basePath() . '/js/jquery.min.js')
+			->appendFile($this->basePath() . '/js/bootstrap.min.js')
+			->appendFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+			->appendFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+			->appendFile($this->basePath() . '/js/doT.js')
+		;
+		
+		$this->inlineScript()
+			->appendFile($this->basePath() . '/js/hash.js');
+		?>
+
+	</head>
+	<body>
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+
+					<a class="navbar-brand" href="<?php echo $this->url('home') ?>" style="padding: 15px 15px;">
+						<span><img src="<?php echo $this->basePath('images/shorten_logo.png') ?>" alt="Shorten" style="width: 20px;"/></span>
+						&nbsp;<?php echo $this->translate('Shorten') ?>
+					</a>
+
+				</div>
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<?php if ($this->action != 'login') { ?>
+							<li>
+								<a href="<?php echo $this->url('index', ['action' => 'create']) ?>"><?php echo $this->translate('Shorten Link') ?></a>
+							</li>
+							<li>
+								<a href="<?php echo $this->url('index', ['action' => 'logout']) ?>"><?php echo $this->translate('Logout') ?></a>
+							</li>
+						<?php } ?>
+						<!--							
+						<?php if (isset($_SESSION['staff_id'])) { ?>
+															<li>
+																<a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a>
+															</li>
+															<li class="dropdown">
+																<a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <b class="caret"></b></a>
+																<ul class="dropdown-menu">
+																	<li>
+																		<a href="<?php echo $this->url('index', array('action' => 'add-category')) ?>">
+																			Add
+																		</a>
+																	</li>
+																	<li>
+																		<a href="<?php echo $this->url('index', array('action' => 'edit-categories')) ?>">
+																			Edit
+																		</a>
+																	</li>
+																</ul>
+															</li>
+															<li class="dropdown">
+																<a href="#" class="dropdown-toggle" data-toggle="dropdown">Words <b class="caret"></b></a>
+																<ul class="dropdown-menu">
+																	<li>
+																		<a href="<?php echo $this->url('index', array('action' => 'add-word')) ?>">
+																			Add
+																		</a>
+																	</li>
+																	<li>
+																		<a href="<?php echo $this->url('index', array('action' => 'edit-words')) ?>">
+																			Edit
+																		</a>
+																	</li>
+																</ul>
+															</li>
+						<?php } ?>
+						-->
+					</ul>
+				</div> 
+			</div>
+		</nav>
+		<div class="container">
+			<br /><br />
+			<?php echo $this->content; ?>
+		</div>
+		<hr>
+		<footer align="center">
+			<p>&copy; 2014 - <?php echo date('Y') ?> by Zaid Daba'een. <?php echo $this->translate('All rights reserved.') ?></p>
+		</footer>
+
+		<script type="text/plain" id="generateOptionTemplate">
+			<option value="{{=it.id}}">{{=it.name}}</option>
+		</script>
+
+
+		<script>
+			$(function() {
+				$("select#langSelect").on("change", function() {
+
+					$("select#generateCategoriesSelect").html('<option value="0" disabled>Select langauge</option>');
+
+					var lang = $(this).val();
+
+					if (lang) {
+
+						$(this).hashForm({
+							form: {'lang': lang},
+							url: "<?php echo $this->url('index', array('action' => 'get-categories')); ?>",
+							btn: $("select#generateCategoriesSelect"),
+							message: "div#main_message",
+							loadingName: "main_map"
+						}).done(function(res) {
+
+							if (res.status === '1') {
+								var obj = new Object;
+								var generateOptionTemplate = doT.template($("#generateOptionTemplate").html());
+
+								for (var i = 0; i < res.results.length; i++) {
+									obj.id = res.results[i].id;
+									obj.name = res.results[i].name;
+
+									$("select#generateCategoriesSelect").append(generateOptionTemplate(obj));
+								}
+
+							}
+						});
+					}
+				});
+			});
+		</script>
+
+		<?php echo $this->inlineScript() ?>
+	</body>
+</html>

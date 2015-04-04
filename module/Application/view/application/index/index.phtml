@@ -1,0 +1,199 @@
+
+<script src="<?php echo $this->basePath('js/ZeroClipboard.js')?>"></script>
+<script>
+
+	$(document).ready(function() {
+		message = $('#message');
+
+		$('.copy').each(function(i, obj) {
+			var client = new ZeroClipboard(obj);
+
+			client.on('aftercopy', function(event) {
+				copyMessage("Copied to clipboard: " + event.data["text/plain"]);
+			});
+		});
+
+	});
+
+	function save(id) {
+
+		var row = $('#tr_' + id);
+		var short = row.find('input[name="short"]').val();
+		var link = row.find('input[name="link"]').val();
+		var active = row.find('input[name="active"]').val() == 'on' ? '1' : '0';
+		var description = row.find('input[name="description"]').val();
+
+		console.log(active);
+		$.ajax({
+			data: {id: id, link: link, short: short, active: active, description: description},
+			url: '<?php echo $this->url('index', ['action' => 'manage'])?>',
+			type: "POST",
+			dataType: "JSON",
+			success: function(res) {
+				if (res.status == "1") {
+					showMessage(message, res);
+				} else {
+					showMessage(message, res);
+				}
+			}
+		});
+	}
+
+	function deleteID(id) {
+
+		var row = $('#tr_' + id);
+		var active = row.find('input[name="active"]').val() == 'on' ? '1' : '0';
+		if(active == '1'){
+			var res = {status:'0', message:'Cannot delete an active short link'};
+			console.log(res);
+			showMessage(message, res);
+			return;
+		}
+
+		$.ajax({
+			data: {id: id},
+			url: '<?php echo $this->url('index', ['action' => 'delete']) ?>',
+			type: "POST",
+			dataType: "JSON",
+			success: function(res) {
+				if (res.status == "1") {
+					showMessage(message, res);
+					row.fadeOut();
+				} else {
+					showMessage(message, res);
+				}
+			}
+		});
+
+	}
+
+	function copyMessage(text) {
+
+		message.show().attr('class', 'alert alert-info');
+		message.html("" + text);
+		
+		setTimeout(function () {
+			return window.message.fadeOut(200);
+		}, 5000);
+
+	}
+
+	function showMessage(jMessage, res) {
+
+		var action = res.status;
+		var message = res.message;
+
+		if (action == '0') {
+			jMessage.show().attr('class', 'alert alert-danger');
+			jMessage.html("" + message);
+		} else if (action == '1') {
+			jMessage.show().attr('class', 'alert alert-success');
+			jMessage.html("" + message);
+		}
+		
+		setTimeout(function () {
+			return window.message.fadeOut(200);
+		}, 5000);
+
+	}
+
+	function search(e) {
+
+		var search = $('#search').val();
+
+		window.location.href = "<?php echo $this->url('index') . '?search=' ?>" + search;
+
+	}
+
+</script>
+
+<div class="jumbotron" align="center">
+	<h2>Shorten</h2>
+	<h4>Track the views of your links</h4>
+
+	<!--<a href="<?php echo $this->url('index', ['action' => 'create'])?>" >Shorten Link</a>-->
+	<div>
+		<input type="text" id="search" placeholder="Search" name="search" value="<?php echo isset($search) ? $search : '' ?>">&nbsp;&nbsp;<button class="btn btn-primary" onclick="return search(this);"><i class="glyphicon glyphicon-search"></i></button>
+	</div>
+</div>
+
+<div id="message"></div>
+
+<div class="col-lg-12">
+	<div class="table-responsive">
+	<table class="table table-bordered">
+			<tr>
+				<td class="highlight">
+
+				</td>
+				<td>
+					Short
+				</td>
+				<td>
+					Link
+				</td>
+				<td class="views">
+					Views
+				</td>
+				<td>
+					Description
+				</td>
+				<td>
+					Active
+				</td>
+				<td>
+					Last Accessed
+				</td>
+				<td>
+					Created At
+				</td>
+				<td>
+					Actions
+				</td>
+			</tr>
+			<?php foreach ($entries as $entry) { ?>
+				<tr id="<?php echo 'tr_' . $entry->id ?>">
+					<td class="highlight">
+						<a href="javascript:void(0);" class="copy" data-clipboard-text="<?php echo $this->host . '\\' . $entry->short ?>"><i class="glyphicon-cloud" ></i>&nbsp;Copy</a>
+					</td>
+					<td>
+						<input type="text" class="form-control" name="short" value="<?php echo $entry->short; ?>">
+					</td>
+					<td>
+						<input type="text" name="link" class="form-control" value="<?php echo $entry->link ?>">
+					</td>
+					<td class="views">
+						<?php echo $entry->views ?>
+					</td>
+					<td>
+						<input type="text" name="description" class="form-control" value="<?php echo $entry->description ?>">
+					</td>
+					<td>
+						<input type="checkbox" class="checkbox" name="active" <?php echo $entry->active ? "checked" : "" ?>
+					</td>
+					<td>
+						<?php echo Date("Y-m-d h:i:s", strtotime($entry->last_accessed) + 3 * 60 * 60); ?>
+					</td>
+					<td>
+						<?php echo $entry->created_at; ?>
+					</td>
+					<td>
+						<a href="javascript:void(0);" id="<?php echo $entry->id ?>" onclick="return save(<?php echo $entry->id ?>);"><i  class="glyphicon glyphicon-save">Save</i></a><br />
+						<div class="dropdown">
+
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="javascript:void(0);" id="<?php echo $entry->id; ?>" onclick="return deleteID(<?php echo $entry->id ?>);" class="deleteBtn">
+										<i class="glyphicon glyphicon-trash">Delete</i>
+									</a>
+
+								</li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			<?php } ?>
+	</table>
+	</div>
+</div>

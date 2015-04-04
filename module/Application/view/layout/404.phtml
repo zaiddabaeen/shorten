@@ -1,0 +1,27 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+ <head>
+  <meta charset="utf-8">
+  <?php
+  echo $this->headTitle($this->translate('Shorten'))->setSeparator(' - ')->setAutoEscape(false);
+
+  echo $this->headMeta()
+	  ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+	  ->appendHttpEquiv('X-UA-Compatible', 'IE=edge');
+
+  echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath('images/icon2xred.png')))
+	  ->appendStylesheet($this->basePath('/css/style.css'));
+  ?>
+ </head>
+
+ <body class="page-404">
+
+  <div class="content">
+   <?php echo $this->content; ?>
+  </div>
+
+  <?php echo $this->inlineScript() ?>
+
+ </body>
+</html>

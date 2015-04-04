@@ -1,0 +1,76 @@
+<script>
+ $(function() {
+
+  $("#addBtn").click(function() {
+   var btn = $(this);
+   $(this).hashForm({
+    form: $('#addForm').serialize(),
+    url: "<?php echo $this->url('index',['action' => 'create']) ?>",
+    btn: btn,
+    message: "div#message",
+    loadingName: "message"
+   }).done(function(res) {
+    if (res.status == '1') {
+		window.location.href="<?php echo $this->url('index')?>";
+    }
+   });
+  });
+
+ });
+</script>
+<div class="col-lg-5 col-lg-offset-4">
+ <form action="" method="post" id="addForm" onSubmit="return false;">
+  <table class="table table-bordered">
+   <tr>
+    <td colspan="2" align="center">
+     <h3>
+      Shorten Link
+     </h3>
+    </td>
+   </tr>
+   <tr>
+    <td>
+     Shortened Link
+    </td>
+    <td>
+     <?php $shortenedLink = shorten(); ?>
+		<input type="text" class="form-control" name="short" value="<?php echo $shortenedLink?>">
+    </td>
+   </tr>
+   <tr>
+    <td>
+     Link:
+    </td>
+    <td>
+     <input type="text" name="link" class="form-control">
+    </td>
+   </tr>
+   <tr>
+    <td>
+     Description:
+    </td>
+    <td>
+     <input type="text" name="description" class="form-control">
+    </td>
+   </tr>
+<!--   <tr>
+    <td>
+     Active:
+    </td>
+    <td>
+     <input type="checkbox" class="checkbox" name="active" checked>
+    </td>
+   </tr>-->
+   <tr>
+    <td colspan="2" align="center">
+     <input type="submit" class="btn btn-primary" id="addBtn" value="Register">
+    </td>
+   </tr>
+   <tr>
+    <td colspan="2" align="center">
+     <div id="message"></div>
+    </td>
+   </tr>
+  </table>
+ </form>
+</div>

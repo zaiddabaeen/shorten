@@ -1,0 +1,11 @@
+!.gitignore
+.composer
+composer
+zendframework
+autoload.php
+<<<<<<< HEAD
+!/composer/
+!/zendframework/
+!/autoload.php
+=======
+>>>>>>> 55c00803eedaa912f54198f4ed71c34f306795b6
